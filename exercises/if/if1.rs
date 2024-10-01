@@ -16,6 +16,14 @@ pub fn bigger(a: i32, b: i32) -> i32 {
     }
 }
 
+pub fn smaller(a:i32,b:i32)->i32{
+    if(a>b){
+        b
+    }else{
+        a
+    }
+}
+
 // Don't mind this for now :)
 #[cfg(test)]
 mod tests {
