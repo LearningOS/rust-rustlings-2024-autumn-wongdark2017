@@ -2,7 +2,7 @@
 	graph
 	This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
+
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -30,6 +30,19 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (node1, node2, weight) = edge;
+
+        // Add nodes if they are not already in the graph
+        self.add_node(node1);
+        self.add_node(node2);
+
+        // Add the edge in both directions since the graph is undirected
+        self.adjacency_table_mutable().entry(node1.to_string())
+            .or_insert_with(Vec::new)
+            .push((node2.to_string(), weight));
+        self.adjacency_table_mutable().entry(node2.to_string())
+            .or_insert_with(Vec::new)
+            .push((node1.to_string(), weight));
     }
 }
 pub trait Graph {
@@ -40,24 +53,23 @@ pub trait Graph {
         if !self.contains(node) {
             self.adjacency_table_mutable().insert(String::from(node), Vec::new());
             true
-        }else {
+        } else {
             false
-        }
-		
+        }	
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
-        let (from_node,to_node,edge) = edge;
+        let (from_node, to_node, weight) = edge;
         if self.contains(from_node) && self.contains(to_node) {
             self.adjacency_table_mutable()
                 .get_mut(from_node)
                 .unwrap()
-                .push((String::from(to_node), *weight));
+                .push((String::from(to_node), weight));
     
             self.adjacency_table_mutable()
                 .get_mut(to_node)
                 .unwrap()
-                .push((String::from(from_node), *weight));
+                .push((String::from(from_node), weight));
         } else {
             if !self.contains(from_node) {
                 self.add_node(from_node);
@@ -65,7 +77,7 @@ pub trait Graph {
             if !self.contains(to_node) {
                 self.add_node(to_node);
             }
-            self.add_edge((from_node, to_node, *weight));
+            self.add_edge((from_node, to_node, weight));
         }
     }
     fn contains(&self, node: &str) -> bool {
@@ -102,6 +114,7 @@ mod test_undirected_graph {
             (&String::from("b"), &String::from("c"), 10),
             (&String::from("c"), &String::from("b"), 10),
         ];
+        
         for edge in expected_edges.iter() {
             assert_eq!(graph.edges().contains(edge), true);
         }
